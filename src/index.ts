@@ -1,52 +1,55 @@
+// Setup basic express server
 import * as express from 'express';
-import * as bodyParser from 'body-parser';
-import { Base64 } from 'js-base64';
 import { createServer } from 'http';
-
+import { Base64 } from 'js-base64';
 import { getApi, getApiFromAppState } from 'services/fb';
-
-import * as fbLogin from 'facebook-chat-api';
-
 const app = express();
+const path = require('path');
+const server = createServer(app);
+const io = require('socket.io')(server);
+const port = process.env.PORT || 3000;
 
-app.use(bodyParser.json());
-
-app.use(async function(req, res, next) {
-  const { session } = req.body;
-  if (!session) {
-    next();
-  }
-  const api = await getApiFromAppState(JSON.parse(Base64.decode(session)));
-  req.fbApi = api;
-  next();
+server.listen(port, function() {
+  console.log('Server listening at port %d', port);
 });
 
-app.post('/login', async (req, res) => {
-  const { email, password } = req.body;
-  try {
-    const api = await getApi(email, password);
-    const sessionData = Base64.encode(JSON.stringify(api.getAppState()));
+// Routing
+app.use(express.static(path.join(__dirname, 'public')));
 
-    res.send({ session: sessionData });
-  } catch (err) {
-    console.log(err);
-    res.send(err);
-  }
-});
+// Chatroom
 
-app.post('/message', async (req, res) => {
-  const { message, threadId } = req.body;
-  req.fbApi.sendMessage(message, threadId, () => {
-    res.send('sent');
+const numUsers = 0;
+
+io.on('connection', function(socket) {
+  let fbApi = null;
+  const addedUser = false;
+
+  console.log('User connected');
+
+  socket.on('login', async ({ email, password }) => {
+    try {
+      const api = await getApi(email, password);
+      fbApi = api;
+      socket.emit('sessionCreated', Base64.encode(JSON.stringify(api.getAppState())));
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+  socket.on('restoreSession', async ({ session }) => {
+    console.log('restore');
+    try {
+      const api = await getApiFromAppState(JSON.parse(Base64.decode(session)));
+      fbApi = api;
+      socket.emit('sessionCreated', Base64.encode(JSON.stringify(api.getAppState())));
+    } catch (err) {
+      console.log(err);
+    }
+  });
+
+  socket.on('sendMessage', async ({ message, threadId }) => {
+    fbApi.sendMessage(message, threadId, () => {
+      socket.emit('sent');
+    });
   });
 });
-
-async function startServer(port: number) {
-  // create db connection so all db calls later on does not need to use async connection promise
-  const server = createServer(app);
-  server.listen(port, () => {
-    console.log(`Server listening on port ${port}.`);
-  });
-}
-
-startServer(3000);
