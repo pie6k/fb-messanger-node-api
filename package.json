@@ -1,0 +1,30 @@
+{
+  "name": "messenger",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "export NODE_PATH=./src && nodemon -e ts --exec \"ts-node src/index.ts --disableWarnings --fast\""
+  },
+  "dependencies": {
+    "base64-js": "^1.2.1",
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "express-jwt": "^5.3.0",
+    "facebook-chat-api": "^1.4.0",
+    "js-base64": "^2.4.0",
+    "jsonwebtoken": "^8.1.0",
+    "nodemon": "^1.14.6",
+    "ts-node": "^4.1.0",
+    "typescript": "^2.6.2",
+    "utf8": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/base64-js": "^1.2.5",
+    "@types/express": "^4.11.0",
+    "@types/js-base64": "^2.3.1",
+    "@types/jsonwebtoken": "^7.2.5",
+    "@types/node": "^8.5.2",
+    "@types/utf8": "^2.1.6"
+  }
+}

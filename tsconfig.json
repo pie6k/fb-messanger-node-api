@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "baseUrl": "./src",
+    "lib": [
+      "es2015"
+    ],
+    "allowSyntheticDefaultImports": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "noUnusedLocals": false,
+    "typeRoots": [
+      "./src/types",
+      "node_modules/@types"
+    ],
+    "inlineSourceMap": true,
+    "inlineSources": true
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "node_modules/**/*.tsx",
+    "node_modules/**/*.ts"
+  ]
+}
