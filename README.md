@@ -1,3 +1,7 @@
+It was starting point for my friend to create api for fb messaging for his MacOS messanger app
+
+
+
 `yarn install`
 
 `yarn dev`
